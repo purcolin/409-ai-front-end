@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会议纪要档案管理系统 - 会议详情</title>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    <!-- 引入Ant Design样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css">
+    <!-- 引入图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        /* 基础样式变量 */
+        :root {
+            --primary-color: #1a4b91;
+            --secondary-color: #f5222d;
+            --text-color: #333333;
+            --text-secondary: #666666;
+            --border-color: #e8e8e8;
+            --bg-light: #f5f5f5;
+            --success-color: #52c41a;
+            --warning-color: #faad14;
+            --error-color: #f5222d;
+            --header-height: 60px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* 顶部导航栏样式 */
+        .header {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--header-height);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 主内容布局 */
+        .main-container {
+            max-width: 1400px;
+            margin:  0;
+            padding: 30px;
+        }
+        
+        /* 面包屑导航 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .breadcrumb a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .breadcrumb .separator {
+            margin: 0 8px;
+            color: var(--text-secondary);
+        }
+        
+        /* 会议详情头部 */
+        .meeting-header {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .meeting-header:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .meeting-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .meeting-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        
+        .status-completed {
+            background-color: rgba(82, 196, 26, 0.1);
+            color: var(--success-color);
+            border: 1px solid #b7eb8f;
+        }
+        
+        .status-pending {
+            background-color: rgba(250, 173, 20, 0.1);
+            color: var(--warning-color);
+            border: 1px solid #ffd591;
+        }
+        
+        .meeting-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .meta-item i {
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+        
+        .meeting-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            background-color: rgba(26, 75, 145, 0.1);
+            color: var(--primary-color);
+            border: 1px solid rgba(26, 75, 145, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .tag:hover {
+            background-color: rgba(26, 75, 145, 0.15);
+        }
+        
+        /* 会议内容布局 */
+        .meeting-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .content-main {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .content-sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* 卡片通用样式 */
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        /* 会议基本信息 */
+        .info-list {
+            list-style: none;
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 15px;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            width: 100px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .info-value {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        /* 会议议题样式 */
+        .topic-list {
+            list-style: none;
+        }
+        
+        .topic-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .topic-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .topic-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .topic-status {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        .status-resolved {
+            background-color: rgba(82, 196, 26, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-discussing {
+            background-color: rgba(250, 173, 20, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .topic-content {
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .topic-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .topic-owner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .topic-owner-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        /* 参会人员样式 */
+        .attendee-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .attendee-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: rgba(18, 57, 111, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .attendee-item:hover {
+            background-color: rgba(18, 57, 111, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .attendee-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .attendee-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .attendee-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .attendee-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        /* 会议决议样式 */
+        .decision-list {
+            list-style: none;
+            counter-reset: decision-counter;
+        }
+        
+        .decision-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .decision-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .decision-item:before {
+            counter-increment: decision-counter;
+            content: counter(decision-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 22px;
+            height: 22px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* 会议附件样式 */
+        .attachment-list {
+            list-style: none;
+        }
+        
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .attachment-item:hover {
+            background-color: rgba(18, 57, 111, 0.02);
+            padding-left: 10px;
+        }
+        
+        .attachment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .attachment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: rgba(18, 57, 111, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .attachment-info {
+            flex: 1;
+        }
+        
+        .attachment-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .attachment-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .attachment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .attachment-action {
+            color: var(--primary-color);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .attachment-action:hover {
+            color: var(--secondary-color);
+        }
+        
+        /* 相关会议样式 */
+        .related-meeting-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .related-meeting-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+            background-color: rgba(18, 57, 111, 0.02);
+        }
+        
+        .related-meeting-item:hover {
+            background-color: rgba(18, 57, 111, 0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-color: var(--border-color);
+        }
+        
+        .related-meeting-date {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 100px;
+            box-shadow: 0 3px 6px rgba(18, 57, 111, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1.3;
+        }
+        
+        .related-meeting-info {
+            flex: 1;
+        }
+        
+        .related-meeting-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+        
+        .related-meeting-title:hover {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        
+        .related-meeting-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .related-meeting-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .related-meeting-meta i {
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+        
+        /* 会议进度图表 */
+        .progress-chart {
+            height: 200px;
+            margin-top: 10px;
+        }
+        
+        /* 底部区域 */
+        .footer-section {
+            background-color: white;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+            .meeting-content {
+                flex-direction: column;
+            }
+            
+            .content-sidebar {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-sidebar {
+                grid-template-columns: 1fr;
+            }
+            
+            .meeting-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div id="navbar-container"></div>
+
+    <!-- 主内容区域 -->
+    <div class="main-container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="./archive_display.html">首页</a>
+            <span class="separator">/</span>
+            <a href="#">会议档案</a>
+            <span class="separator">/</span>
+            <span>数字化转型战略季度评审会议</span>
+        </div>
+        
+        <!-- 会议详情头部 -->
+        <div class="meeting-header">
+            <div class="meeting-title">
+                <span>数字化转型战略季度评审会议</span>
+                <span class="meeting-status status-completed">已完成</span>
+            </div>
+            <div class="meeting-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>2023-12-15 14:30-16:30</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>北京总部 - 第一会议室</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-user-tie"></i>
+                    <span>主持人: 张国强</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-users"></i>
+                    <span>参会人数: 15人</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>议题数量: 4个</span>
+                </div>
+            </div>
+            <div class="meeting-tags">
+                <span class="tag">数字化转型</span>
+                <span class="tag">季度评审</span>
+                <span class="tag">战略规划</span>
+                <span class="tag">技术架构</span>
+            </div>
+        </div>
+        
+        <!-- 会议内容区域 -->
+        <div class="meeting-content">
+            <!-- 左侧主要内容 -->
+            <div class="content-main">
+                <!-- 关联图谱 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>关联图谱</span>
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="card-content">
+                        <div id="relationshipChart" class="relationship-chart"></div>
+                    </div>
+                </div>
+                
+                <!-- 会议议题 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>会议议题</span>
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="card-content">
+                        <ul class="topic-list">
+                            <li class="topic-item">
+                                <div class="topic-header">
+                                    <div class="topic-title">数字化转型第一阶段执行情况评估</div>
+                                    <div class="topic-status status-resolved">已解决</div>
+                                </div>
+                                <div class="topic-content">
+                                    <p>评估数字化转型第一阶段（2023年Q1-Q3）的执行情况，包括云基础设施建设、核心业务系统升级和数据治理体系建设三个方面的进展、存在问题及解决方案。</p>
+                                </div>
+                                <div class="topic-meta">
+                                    <div class="topic-owner">
+                                        <div class="topic-owner-avatar">李</div>
+                                        <span>负责人: 李明 (技术总监)</span>
+                                    </div>
+                                    <div class="topic-time">讨论时间: 30分钟</div>
+                                </div>
+                            </li>
+                            <li class="topic-item">
+                                <div class="topic-header">
+                                    <div class="topic-title">技术挑战与解决方案</div>
+                                    <div class="topic-status status-resolved">已解决</div>
+                                </div>
+                                <div class="topic-content">
+                                    <p>讨论数字化转型过程中遇到的主要技术挑战，包括系统兼容性问题、数据迁移难点和安全合规要求等，并提出相应的解决方案和技术路线。</p>
+                                </div>
+                                <div class="topic-meta">
+                                    <div class="topic-owner">
+                                        <div class="topic-owner-avatar">李</div>
+                                        <span>负责人: 李明 (技术总监)</span>
+                                    </div>
+                                    <div class="topic-time">讨论时间: 45分钟</div>
+                                </div>
+                            </li>
+                            <li class="topic-item">
+                                <div class="topic-header">
+                                    <div class="topic-title">资源配置与预算调整</div>
+                                    <div class="topic-status status-resolved">已解决</div>
+                                </div>
+                                <div class="topic-content">
+                                    <p>根据项目进展情况，讨论下一阶段的资源配置计划和预算调整方案，确保关键项目有足够的人力和资金支持。</p>
+                                </div>
+                                <div class="topic-meta">
+                                    <div class="topic-owner">
+                                        <div class="topic-owner-avatar">王</div>
+                                        <span>负责人: 王洪 (财务总监)</span>
+                                    </div>
+                                    <div class="topic-time">讨论时间: 30分钟</div>
+                                </div>
+                            </li>
+                            <li class="topic-item">
+                                <div class="topic-header">
+                                    <div class="topic-title">2024年Q1工作计划制定</div>
+                                    <div class="topic-status status-discussing">讨论中</div>
+                                </div>
+                                <div class="topic-content">
+                                    <p>制定2024年第一季度数字化转型工作计划，包括核心系统上云、数据中台建设和业务流程重组等重点工作的时间表和里程碑。</p>
+                                </div>
+                                <div class="topic-meta">
+                                    <div class="topic-owner">
+                                        <div class="topic-owner-avatar">张</div>
+                                        <span>负责人: 张国强 (董事长)</span>
+                                    </div>
+                                    <div class="topic-time">讨论时间: 45分钟</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 会议决议 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>会议决议</span>
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <div class="card-content">
+                        <ul class="decision-list">
+                            <li class="decision-item">
+                                加快云基础设施建设进度，在2024年Q1完成核心系统上云，由技术中心负责实施，李明总监负责督导。
+                            </li>
+                            <li class="decision-item">
+                                针对数据迁移过程中的兼容性问题，成立专项工作组，由李明总监牵头，在1月底前完成解决方案设计。
+                            </li>
+                            <li class="decision-item">
+                                调整2024年数字化转型预算，增加200万元用于核心系统升级和数据治理，由财务部在下周内完成预算调整方案。
+                            </li>
+                            <li class="decision-item">
+                                2024年Q1重点推进数据中台建设，将原计划的业务流程重组工作推迟到Q2，由张国强董事长负责协调各部门配合。
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧边栏 -->
+            <div class="content-sidebar">
+                <!-- 会议基本信息 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>会议基本信息</span>
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="card-content">
+                        <ul class="info-list">
+                            <li class="info-item">
+                                <div class="info-label">会议编号</div>
+                                <div class="info-value">M2023121501</div>
+                            </li>
+                            <li class="info-item">
+                                <div class="info-label">会议类型</div>
+                                <div class="info-value">季度评审会议</div>
+                            </li>
+                            <li class="info-item">
+                                <div class="info-label">会议形式</div>
+                                <div class="info-value">线下会议</div>
+                            </li>
+                            <li class="info-item">
+                                <div class="info-label">会议状态</div>
+                                <div class="info-value">已完成</div>
+                            </li>
+                            <li class="info-item">
+                                <div class="info-label">记录人</div>
+                                <div class="info-value">刘晓</div>
+                            </li>
+                            <li class="info-item">
+                                <div class="info-label">审核人</div>
+                                <div class="info-value">张国强</div>
+                            </li>
+                            <li class="info-item">
+                                <div class="info-label">创建时间</div>
+                                <div class="info-value">2023-12-15 17:30</div>
+                            </li>
+                            <li class="info-item">
+                                <div class="info-label">最后更新</div>
+                                <div class="info-value">2023-12-16 10:15</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 参会人员 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>参会人员</span>
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="attendee-list">
+                            <div class="attendee-item">
+                                <div class="attendee-avatar">张</div>
+                                <div class="attendee-info">
+                                    <div class="attendee-name">张国强</div>
+                                    <div class="attendee-position">董  事  长</div>
+                                </div>
+                                <div class="attendee-role">主持人</div>
+                            </div>
+                            <div class="attendee-item">
+                                <div class="attendee-avatar">李</div>
+                                <div class="attendee-info">
+                                    <div class="attendee-name">李明</div>
+                                    <div class="attendee-position">技术总监</div>
+                                </div>
+                                <div class="attendee-role">汇报人</div>
+                            </div>
+                            <div class="attendee-item">
+                                <div class="attendee-avatar">王</div>
+                                <div class="attendee-info">
+                                    <div class="attendee-name">王洪</div>
+                                    <div class="attendee-position">财务总监</div>
+                                </div>
+                                <div class="attendee-role">汇报人</div>
+                            </div>
+                            <div class="attendee-item">
+                                <div class="attendee-avatar">刘</div>
+                                <div class="attendee-info">
+                                    <div class="attendee-name">刘晓</div>
+                                    <div class="attendee-position">产品经理</div>
+                                </div>
+                                <div class="attendee-role">记录人</div>
+                            </div>
+                            <div class="attendee-item">
+                                <div class="attendee-avatar">赵</div>
+                                <div class="attendee-info">
+                                    <div class="attendee-name">赵建国</div>
+                                    <div class="attendee-position">市场总监</div>
+                                </div>
+                                <div class="attendee-role">参会人</div>
+                            </div>
+                            <div class="more-attendees">
+                                <a href="#">查看全部15位参会人员</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 相关纪要文档 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>相关纪要文档</span>
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="document-list">
+                            <!-- 会议纪要 -->
+                            <div class="document-item summary-item" id="meetingSummaryItem">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-title">数字化转型第四季度评审会议纪要</div>
+                                    <div class="document-meta">
+                                        <span>2023-12-15</span> · <span>刘晓 记录</span>
+                                    </div>
+                                </div>
+                                <button class="view-summary-btn">
+                                    <i class="fas fa-eye"></i> 查看
+                                </button>
+                            </div>
+                            
+                            <!-- 其他相关文档 -->
+                            <div class="document-item">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-excel"></i>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-title">数字化转型预算调整方案</div>
+                                    <div class="document-meta">
+                                        <span>XLSX</span> · <span>1.2MB</span> · <span>王洪 上传</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="document-download" title="下载文件">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="document-item">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-title">技术挑战分析报告</div>
+                                    <div class="document-meta">
+                                        <span>PDF</span> · <span>3.5MB</span> · <span>李明 上传</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="document-download" title="下载文件">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="document-item">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-powerpoint"></i>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-title">数字化转型第一阶段执行情况汇报</div>
+                                    <div class="document-meta">
+                                        <span>PPTX</span> · <span>5.8MB</span> · <span>李明 上传</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="document-download" title="下载文件">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="document-item">
+                                <div class="document-icon">
+                                    <i class="fas fa-file-word"></i>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-title">2024年Q1工作计划初稿</div>
+                                    <div class="document-meta">
+                                        <span>DOCX</span> · <span>0.8MB</span> · <span>张国强 上传</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="document-download" title="下载文件">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 关联会议 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>关联会议</span>
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="card-content">
+                        <ul class="related-meeting-list">
+                            <li class="related-meeting-item">
+                                <div class="related-meeting-date">2023-09-15</div>
+                                <div class="related-meeting-info">
+                                    <a href="#" class="related-meeting-title">数字化转型第三季度评审会议</a>
+                                    <div class="related-meeting-meta">
+                                        <span><i class="fas fa-user"></i> 张国强</span>
+                                        <span><i class="fas fa-users"></i> 12人参与</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="related-meeting-item">
+                                <div class="related-meeting-date">2023-06-20</div>
+                                <div class="related-meeting-info">
+                                    <a href="#" class="related-meeting-title">数字化转型第二季度评审会议</a>
+                                    <div class="related-meeting-meta">
+                                        <span><i class="fas fa-user"></i> 张国强</span>
+                                        <span><i class="fas fa-users"></i> 10人参与</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="related-meeting-item">
+                                <div class="related-meeting-date">2023-03-18</div>
+                                <div class="related-meeting-info">
+                                    <a href="#" class="related-meeting-title">数字化转型第一季度评审会议</a>
+                                    <div class="related-meeting-meta">
+                                        <span><i class="fas fa-user"></i> 张国强</span>
+                                        <span><i class="fas fa-users"></i> 9人参与</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部区域 -->
+    <footer class="footer-section">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-landmark"></i>
+                会议纪要档案管理系统
+            </div>
+            <div class="footer-links">
+                <a href="#">关于系统</a>
+                <a href="#">帮助中心</a>
+                <a href="#">联系我们</a>
+            </div>
+            <div class="footer-copyright">
+                © 2023 会议纪要档案管理系统 版权所有
+            </div>
+        </div>
+    </footer>
+
+    <!-- 会议纪要弹窗 -->
+    <div id="summaryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>会议纪要</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="meeting-summary">
+                    <p>本次会议主要对数字化转型第一阶段的执行情况进行了全面评估，并讨论了技术挑战、资源配置和下一阶段工作计划等议题。</p>
+                    
+                    <p>李明总监汇报了第一阶段的执行情况，总体进度达到计划的85%，其中云基础设施建设完成70%，核心业务系统升级完成90%，数据治理体系建设完成60%。主要存在的问题包括云基础设施建设进度略有滞后、数据迁移过程中遇到的系统兼容性问题以及数据治理标准尚未完全统一等。</p>
+                    
+                    <p>针对技术挑战，与会人员进行了深入讨论，一致认为应优先解决系统兼容性问题，成立专项工作组集中攻关；同时加强与外部技术伙伴的合作，引入先进经验和解决方案。</p>
+                    
+                    <p>王洪总监提出了资源配置与预算调整方案，建议增加数字化转型预算，重点支持核心系统升级和数据治理工作。经讨论，会议同意增加200万元预算，并优化人力资源配置，增加技术研发人员。</p>
+                    
+                    <p>张国强董事长主持讨论了2024年Q1工作计划，提出应将核心系统上云作为首要任务，同时推进数据中台建设，为后续业务创新提供支撑。考虑到资源有限，决定将业务流程重组工作推迟到Q2进行。</p>
+                    
+                    <p>会议最后形成了四项决议，明确了下一阶段的工作重点、责任人和时间节点，为数字化转型工作的持续推进提供了明确指导。</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary close-btn">关闭</button>
+                <button class="btn-primary"><i class="fas fa-download"></i> 下载纪要</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 等待DOM加载完成后再初始化图表
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化关联图谱
+            var relationshipChart = echarts.init(document.getElementById('relationshipChart'));
+            
+            // 关联图谱配置
+            var relationshipOption = {
+                title: {
+                    text: '数字化转型第四季度评审会议关联图谱',
+                    top: 'top',
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 16,
+                        color: '#12396f'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        if (params.dataType === 'edge') {
+                            return params.data.source + ' → ' + params.data.target;
+                        }
+                        return params.data.name;
+                    }
+                },
+                legend: [{
+                    orient: 'horizontal',
+                    left: 'center',
+                    top: 'bottom',
+                    textStyle: {
+                        color: '#666'
+                    },
+                    data: ['会议', '人员', '议题', '部门', '文档']
+                }],
+                series: [{
+                    type: 'graph',
+                    layout: 'force',
+                    data: [
+                        {
+                            name: '数字化转型第四季度评审会议',
+                            value: 20,
+                            category: 0,
+                            symbolSize: 50,
+                            itemStyle: {
+                                color: '#12396f'
+                            }
+                        },
+                        {
+                            name: '张国强',
+                            value: 15,
+                            category: 1,
+                            symbolSize: 30,
+                            itemStyle: {
+                                color: '#9c0000'
+                            }
+                        },
+                        {
+                            name: '李明',
+                            value: 15,
+                            category: 1,
+                            symbolSize: 30,
+                            itemStyle: {
+                                color: '#9c0000'
+                            }
+                        },
+                        {
+                            name: '王洪',
+                            value: 15,
+                            category: 1,
+                            symbolSize: 30,
+                            itemStyle: {
+                                color: '#9c0000'
+                            }
+                        },
+                        {
+                            name: '数字化转型第一阶段执行情况评估',
+                            value: 8,
+                            category: 2,
+                            symbolSize: 35,
+                            itemStyle: {
+                                color: '#3e77b0'
+                            }
+                        },
+                        {
+                            name: '技术挑战与解决方案',
+                            value: 8,
+                            category: 2,
+                            symbolSize: 30,
+                            itemStyle: {
+                                color: '#3e77b0'
+                            }
+                        },
+                        {
+                            name: '资源配置与预算调整',
+                            value: 8,
+                            category: 2,
+                            symbolSize: 30,
+                            itemStyle: {
+                                color: '#3e77b0'
+                            }
+                        },
+                        {
+                            name: '2024年Q1工作计划制定',
+                            value: 8,
+                            category: 2,
+                            symbolSize: 35,
+                            itemStyle: {
+                                color: '#3e77b0'
+                            }
+                        },
+                        {
+                            name: '技术中心',
+                            value: 6,
+                            category: 3,
+                            symbolSize: 25,
+                            itemStyle: {
+                                color: '#52c41a'
+                            }
+                        },
+                        {
+                            name: '财务部',
+                            value: 6,
+                            category: 3,
+                            symbolSize: 20,
+                            itemStyle: {
+                                color: '#52c41a'
+                            }
+                        },
+                        {
+                            name: '数字化转型第三季度评审会议',
+                            value: 10,
+                            category: 0,
+                            symbolSize: 30,
+                            itemStyle: {
+                                color: '#12396f'
+                            }
+                        },
+                        {
+                            name: '数字化转型预算调整方案.xlsx',
+                            value: 5,
+                            category: 4,
+                            symbolSize: 20,
+                            itemStyle: {
+                                color: '#faad14'
+                            }
+                        },
+                        {
+                            name: '技术挑战分析报告.pdf',
+                            value: 5,
+                            category: 4,
+                            symbolSize: 20,
+                            itemStyle: {
+                                color: '#faad14'
+                            }
+                        }
+                    ],
+                    links: [
+                        {source: '数字化转型第四季度评审会议', target: '张国强'},
+                        {source: '数字化转型第四季度评审会议', target: '李明'},
+                        {source: '数字化转型第四季度评审会议', target: '王洪'},
+                        {source: '数字化转型第四季度评审会议', target: '数字化转型第一阶段执行情况评估'},
+                        {source: '数字化转型第四季度评审会议', target: '技术挑战与解决方案'},
+                        {source: '数字化转型第四季度评审会议', target: '资源配置与预算调整'},
+                        {source: '数字化转型第四季度评审会议', target: '2024年Q1工作计划制定'},
+                        {source: '数字化转型第四季度评审会议', target: '数字化转型第三季度评审会议'},
+                        {source: '李明', target: '技术中心'},
+                        {source: '李明', target: '数字化转型第一阶段执行情况评估'},
+                        {source: '李明', target: '技术挑战与解决方案'},
+                        {source: '李明', target: '技术挑战分析报告.pdf'},
+                        {source: '王洪', target: '财务部'},
+                        {source: '王洪', target: '资源配置与预算调整'},
+                        {source: '王洪', target: '数字化转型预算调整方案.xlsx'},
+                        {source: '张国强', target: '2024年Q1工作计划制定'},
+                        {source: '数字化转型第三季度评审会议', target: '张国强'},
+                        {source: '数字化转型第三季度评审会议', target: '李明'}
+                    ],
+                    categories: [
+                        {name: '会议'},
+                        {name: '人员'},
+                        {name: '议题'},
+                        {name: '部门'},
+                        {name: '文档'}
+                    ],
+                    roam: true,
+                    label: {
+                        show: true,
+                        position: 'right',
+                        formatter: '{b}',
+                        fontSize: 12
+                    },
+                    lineStyle: {
+                        color: 'source',
+                        curveness: 0.3,
+                        width: 1.5
+                    },
+                    emphasis: {
+                        focus: 'adjacency',
+                        lineStyle: {
+                            width: 5
+                        }
+                    },
+                    force: {
+                        repulsion: 200,
+                        edgeLength: 120,
+                        gravity: 0.1
+                    }
+                }]
+            };
+            
+            // 设置图表选项
+            relationshipChart.setOption(relationshipOption);
+            
+            // 窗口大小变化时重新调整图表大小
+            window.addEventListener('resize', function() {
+                relationshipChart.resize();
+            });
+        });
+        
+        // 会议纪要弹窗功能
+        var modal = document.getElementById('summaryModal');
+        var summaryItem = document.getElementById('meetingSummaryItem');
+        var closeModal = document.getElementsByClassName('close-modal')[0];
+        var closeBtn = document.getElementsByClassName('close-btn')[0];
+        
+        summaryItem.onclick = function() {
+            modal.style.display = 'block';
+        }
+        
+        closeModal.onclick = function() {
+            modal.style.display = 'none';
+        }
+        
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        fetch('./includes/navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+                
+                // 设置当前页面的导航项为活动状态
+                const currentPage = window.location.pathname.split('/').pop();
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    const linkPage = link.getAttribute('href');
+                    if (currentPage === linkPage || 
+                        (currentPage === 'meeting_detail.html' && linkPage === 'archive_display.html')) {
+                        link.classList.add('active');
+                    }
+                });
+            })
+            .catch(error => console.error('导航栏加载失败:', error));
+    </script>
+
+    <style>
+        /* 关联图谱样式 */
+        .relationship-chart {
+            height: 500px;
+            width: 100%;
+            margin: 0 auto;
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            width: 70%;
+            max-width: 900px;
+            animation: modalFadeIn 0.3s;
+            overflow: hidden;
+        }
+        
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .modal-header {
+            padding: 18px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 18px;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .close-modal {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .close-modal:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+            line-height: 1.7;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background-color: #f9f9f9;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(18, 57, 111, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: #0e2c59;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(18, 57, 111, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(18, 57, 111, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e5e5e5;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* 美化文档列表样式 */
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .document-item:hover {
+            background-color: rgba(18, 57, 111, 0.03);
+            transform: translateY(-2px);
+            border-color: var(--border-color);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .document-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(18, 57, 111, 0.08);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .document-item:hover .document-icon {
+            background-color: rgba(18, 57, 111, 0.12);
+            transform: scale(1.05);
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 4px;
+            transition: all 0.3s;
+        }
+
+        .document-item:hover .document-title {
+            color: var(--primary-color);
+        }
+
+        .document-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .document-download {
+            color: var(--primary-color);
+            font-size: 16px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(18, 57, 111, 0.05);
+        }
+
+        .document-download:hover {
+            background-color: rgba(18, 57, 111, 0.15);
+            color: #0e2c59;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(18, 57, 111, 0.1);
+        }
+
+        .document-download:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* 会议纪要项特殊样式 */
+        .summary-item {
+            background-color: rgba(18, 57, 111, 0.03);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .summary-item .document-icon {
+            background-color: rgba(18, 57, 111, 0.12);
+        }
+
+        .summary-item:hover {
+            background-color: rgba(18, 57, 111, 0.06);
+        }
+
+        .view-summary-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(18, 57, 111, 0.15);
+            font-weight: 500;
+        }
+
+        .view-summary-btn:hover {
+            background-color: #0e2c59;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(18, 57, 111, 0.25);
+        }
+
+        .view-summary-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(18, 57, 111, 0.15);
+        }
+        
+        .more-attendees a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 0;
+            border-bottom: 1px dashed transparent;
+        }
+        
+        .more-attendees a:hover {
+            color: #0e2c59;
+            border-bottom-color: #0e2c59;
+        }
+        
+        .more-attendees a::after {
+            content: '\f054';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 10px;
+        }
+        
+        .related-meeting-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+            padding: 2px 0;
+        }
+        
+        .related-meeting-title:hover {
+            color: #0e2c59;
+            text-decoration: none;
+            transform: translateX(3px);
+        }
+    </style>
+</body>
+</html>
+                            

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人物详情 - 会议纪要档案管理系统</title>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    <!-- 引入Ant Design样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css">
+    <!-- 引入图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 引入自定义样式表 -->
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div id="navbar-container"></div>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 返回按钮 -->
+        <div class="breadcrumb">
+            <a href="archive_display.html"><i class="fas fa-home"></i> 首页</a>
+            <span class="separator">/</span>
+            <a href="#"><i class="fas fa-user-tie"></i> 人员目录</a>
+            <span class="separator">/</span>
+            <span>张国强</span>
+        </div>
+
+        <!-- 人物信息概览 -->
+        <section class="person-overview">
+            <div class="person-header">
+                <div class="person-avatar-section">
+                    <div class="person-avatar large">张</div>
+                    <div class="person-historical-badge">历史人物</div>
+                </div>
+                <div class="person-info-section">
+                    <div class="person-title">
+                        <h1>张国强</h1>
+                        <div class="person-tags">
+                            <span class="tag tag-blue">董事长</span>
+                            <span class="tag tag-green">战略决策委员会</span>
+                            <span class="tag tag-orange">高管团队</span>
+                        </div>
+                    </div>
+                    <div class="person-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-building"></i>
+                            <span>所属部门：战略规划部</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-briefcase"></i>
+                            <span>职务：董事长</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-history"></i>
+                            <span>任职时间：2018年3月至今</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>背景：哈佛商学院MBA</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="person-actions">
+                    <button class="action-btn"><i class="fas fa-file-alt"></i> 查看相关档案</button>
+                    <button class="action-btn"><i class="fas fa-project-diagram"></i> 查看关系网络</button>
+                    <button class="action-btn"><i class="fas fa-bookmark"></i> 收藏人物</button>
+                </div>
+            </div>
+
+            <!-- 统计数据 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">126</div>
+                    <div class="stat-label">参与会议</div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>历史排名第3位</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">主持会议</div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>历史排名第2位</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">89</div>
+                    <div class="stat-label">参与议题</div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>关键议题占比78%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">234</div>
+                    <div class="stat-label">发表观点</div>
+                    <div class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>影响力指数92</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主要内容区域 -->
+        <div class="content-layout">
+            <!-- 左侧主要内容 -->
+            <div class="main-section">
+                <!-- 人物简介 -->
+                <section class="biography-section">
+                    <h2 class="section-title">人物简介</h2>
+                    <div class="biography-content">
+                        <p>张国强，男，1968年生，现任公司董事长兼战略规划部负责人。哈佛商学院MBA，曾任职于多家世界500强企业，拥有超过25年的企业管理经验。</p>
+                        <p>2018年3月加入公司担任董事长一职，主导了公司数字化转型战略的制定与实施，推动公司市值在三年内增长超过200%。在其领导下，公司成功拓展了国际市场，建立了完善的研发创新体系。</p>
+                        <p>张国强董事长以其前瞻性的战略眼光和果断的决策风格著称，是公司数字化转型和全球化战略的核心推动者。</p>
+                    </div>
+                </section>
+                
+                <!-- 活动时间轴 -->
+                <section class="activity-section">
+                    <h2 class="section-title">重要活动记录</h2>
+                    <div class="activity-timeline">
+                        <!-- 活动项 -->
+                        <div class="activity-item">
+                            <div class="activity-time">
+                                <div class="date">2023-12-15</div>
+                                <div class="time">14:30</div>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-header">
+                                    <h3>数字化转型战略季度评审会议</h3>
+                                    <span class="tag tag-blue">主持人</span>
+                                </div>
+                                <p class="activity-summary">主持季度评审会议，评估数字化转型第一阶段执行情况，讨论技术挑战和资源配置问题。</p>
+                                <div class="activity-meta">
+                                    <span><i class="fas fa-users"></i> 15人参会</span>
+                                    <span><i class="fas fa-comments"></i> 8条发言</span>
+                                    <span><i class="fas fa-tasks"></i> 4项决议</span>
+                                    <a href="#" class="view-detail">查看档案详情</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-time">
+                                <div class="date">2023-12-10</div>
+                                <div class="time">10:00</div>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-header">
+                                    <h3>高管团队周例会</h3>
+                                    <span class="tag tag-green">参会人</span>
+                                </div>
+                                <p class="activity-summary">参与周例会讨论，重点关注市场拓展策略和新产品研发进展。提出加强与战略客户合作的建议。</p>
+                                <div class="activity-meta">
+                                    <span><i class="fas fa-users"></i> 8人参会</span>
+                                    <span><i class="fas fa-comments"></i> 3条发言</span>
+                                    <span><i class="fas fa-tasks"></i> 2项决议</span>
+                                    <a href="#" class="view-detail">查看档案详情</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 重要观点 -->
+                <section class="insights-section">
+                    <h2 class="section-title">重要观点与思想</h2>
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <div class="insight-header">
+                                <div class="insight-meta">
+                                    <span class="insight-date">2023-12-15</span>
+                                    <span class="insight-topic">数字化转型</span>
+                                </div>
+                                <div class="insight-stats">
+                                    <span><i class="fas fa-lightbulb"></i> 核心思想</span>
+                                </div>
+                            </div>
+                            <div class="insight-content">
+                                <p>"我们需要加快云基础设施建设进度，这是支撑后续业务创新的关键。建议在明年Q1完成核心系统上云。"</p>
+                            </div>
+                            <div class="insight-footer">
+                                <span class="meeting-ref">来自：数字化转型战略季度评审会议</span>
+                                <a href="#" class="view-context">查看原文档案</a>
+                            </div>
+                        </div>
+
+                        <div class="insight-card">
+                            <div class="insight-header">
+                                <div class="insight-meta">
+                                    <span class="insight-date">2023-12-10</span>
+                                    <span class="insight-topic">市场战略</span>
+                                </div>
+                                <div class="insight-stats">
+                                    <span><i class="fas fa-lightbulb"></i> 战略思想</span>
+                                </div>
+                            </div>
+                            <div class="insight-content">
+                                <p>"建议将重点客户服务前置，组建专门的客户成功团队，提升客户满意度和续约率。"</p>
+                            </div>
+                            <div class="insight-footer">
+                                <span class="meeting-ref">来自：高管团队周例会</span>
+                                <a href="#" class="view-context">查看原文档案</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <aside class="sidebar-section">
+                <!-- 关注的议题 -->
+                <div class="sidebar-card">
+                    <h3 class="card-title"><i class="fas fa-star"></i> 主导议题</h3>
+                    <div class="topic-list">
+                        <a href="#" class="topic-item">
+                            <span class="topic-name">数字化转型战略规划</span>
+                            <span class="topic-status">核心议题</span>
+                        </a>
+                        <a href="#" class="topic-item">
+                            <span class="topic-name">新产品研发计划</span>
+                            <span class="topic-status">重要议题</span>
+                        </a>
+                        <a href="#" class="topic-item">
+                            <span class="topic-name">市场拓展战略</span>
+                            <span class="topic-status">长期议题</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 常见协作者改为关键人物关系 -->
+                <div class="sidebar-card">
+                    <h3 class="card-title"><i class="fas fa-users"></i> 关键人物关系</h3>
+                    <div class="collaborator-list">
+                        <a href="#" class="collaborator-item">
+                            <div class="collaborator-avatar">李</div>
+                            <div class="collaborator-info">
+                                <div class="collaborator-name">李明</div>
+                                <div class="collaborator-role">技术总监</div>
+                            </div>
+                            <div class="collaboration-count">
+                                <span>核心合作伙伴</span>
+                            </div>
+                        </a>
+                        <a href="#" class="collaborator-item">
+                            <div class="collaborator-avatar">王</div>
+                            <div class="collaborator-info">
+                                <div class="collaborator-name">王洪</div>
+                                <div class="collaborator-role">产品总监</div>
+                            </div>
+                            <div class="collaboration-count">
+                                <span>重要合作者</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 相关历史文献 -->
+                <div class="sidebar-card">
+                    <h3 class="card-title"><i class="fas fa-book"></i> 相关历史文献</h3>
+                    <div class="document-list">
+                        <a href="#" class="document-item">
+                            <div class="document-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div class="document-info">
+                                <div class="document-title">《数字化转型白皮书》</div>
+                                <div class="document-meta">2022年 | 主要撰写人</div>
+                            </div>
+                        </a>
+                        <a href="#" class="document-item">
+                            <div class="document-icon"><i class="fas fa-file-alt"></i></div>
+                            <div class="document-info">
+                                <div class="document-title">《公司五年发展规划》</div>
+                                <div class="document-meta">2021年 | 核心制定者</div>
+                            </div>
+                        </a>
+                        <a href="#" class="document-item">
+                            <div class="document-icon"><i class="fas fa-file-powerpoint"></i></div>
+                            <div class="document-info">
+                                <div class="document-title">《全球化战略演讲稿》</div>
+                                <div class="document-meta">2020年 | 演讲者</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- 底部区域 -->
+    <footer class="footer-section">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-landmark"></i>
+                会议纪要档案管理系统
+            </div>
+            <div class="footer-links">
+                <a href="#">关于系统</a>
+                <a href="#">帮助中心</a>
+                <a href="#">联系我们</a>
+            </div>
+            <div class="footer-copyright">
+                © 2023 会议纪要档案管理系统 版权所有
+            </div>
+        </div>
+    </footer>
+
+    <style>
+    /* 基础样式变量 */
+    :root {
+        --primary-color: #1a4b91;
+        --secondary-color: #f5222d;
+        --text-color: #333333;
+        --text-secondary: #666666;
+        --border-color: #e8e8e8;
+        --bg-light: #f5f5f5;
+        --success-color: #52c41a;
+        --warning-color: #faad14;
+        --error-color: #f5222d;
+    }
+
+    /* 基础重置样式 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    body {
+        background-color: #f0f2f5;
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+      /* 顶部导航栏样式 */
+      .header {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--header-height);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    /* 主内容布局 */
+    .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 30px;
+    }
+
+    /* 面包屑导航 */
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .breadcrumb a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: var(--primary-color);
+    }
+
+    .breadcrumb .separator {
+        margin: 0 8px;
+    }
+
+    /* 人物概览区域 */
+    .person-overview {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .person-overview:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 标签样式 */
+    .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .tag-blue {
+        background-color: #e6f7ff;
+        color: #1890ff;
+        border: 1px solid #91d5ff;
+    }
+
+    .tag-green {
+        background-color: #f6ffed;
+        color: #52c41a;
+        border: 1px solid #b7eb8f;
+    }
+
+    .tag-orange {
+        background-color: #fff7e6;
+        color: #fa8c16;
+        border: 1px solid #ffd591;
+    }
+
+    /* 人物头像和徽章 */
+    .person-avatar.large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .person-historical-badge {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        border: 2px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 统计卡片 */
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 活动时间轴 */
+    .activity-item {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .activity-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 侧边栏卡片 */
+    .sidebar-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+
+    .sidebar-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 底部区域 */
+    .footer-section {
+        background-color: white;
+        padding: 30px;
+        margin-top: 50px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .footer-links {
+        display: flex;
+        gap: 20px;
+    }
+
+    .footer-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .footer-links a:hover {
+        color: var(--primary-color);
+    }
+
+    .footer-copyright {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 1200px) {
+        .content-layout {
+            flex-direction: column;
+        }
+        
+        .sidebar-section {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .person-header {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .person-actions {
+            width: 100%;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .person-meta {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    /* 补充和修复关键样式 */
+    
+    /* 人物头部布局 */
+    .person-header {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .person-avatar-section {
+        position: relative;
+    }
+
+    .person-info-section {
+        flex: 1;
+    }
+
+    .person-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* 人物标题和标签 */
+    .person-title {
+        margin-bottom: 20px;
+    }
+
+    .person-title h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+    }
+
+    .person-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* 人物元信息 */
+    .person-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+    }
+
+    /* 操作按钮 */
+    .action-btn {
+        padding: 10px 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: white;
+        color: var(--text-color);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .action-btn:hover {
+        background: var(--bg-light);
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* 统计网格 */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+
+    .stat-trend {
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .stat-trend.up {
+        color: var(--success-color);
+    }
+
+    /* 内容布局 */
+    .content-layout {
+        display: flex;
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .main-section {
+        flex: 2;
+    }
+
+    .sidebar-section {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    /* 主要内容区块 */
+    .section-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* 活动时间轴 */
+    .activity-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .activity-time {
+        min-width: 100px;
+    }
+
+    .activity-time .date {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .activity-time .time {
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+
+    .activity-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .activity-header h3 {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .activity-summary {
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+
+    .activity-meta {
+        display: flex;
+        gap: 15px;
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+    .view-detail {
+        color: var(--primary-color);
+        text-decoration: none;
+        margin-left: auto;
+    }
+
+    /* 观点卡片 */
+    .insights-grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    .insight-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .insight-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .insight-meta {
+        display: flex;
+        gap: 15px;
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+    .insight-content {
+        color: var(--text-color);
+        margin-bottom: 15px;
+    }
+
+    .insight-footer {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+
+    /* 侧边栏卡片内容 */
+    .card-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .topic-list, .collaborator-list, .document-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .topic-item, .collaborator-item, .document-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: var(--bg-light);
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--text-color);
+        transition: all 0.3s;
+    }
+
+    .topic-item:hover, .collaborator-item:hover, .document-item:hover {
+        background: rgba(26, 75, 145, 0.1);
+    }
+
+    .collaborator-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .collaborator-info {
+        flex: 1;
+        margin-left: 10px;
+    }
+
+    .collaborator-name {
+        font-weight: bold;
+    }
+
+    .collaborator-role {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+
+    .document-icon {
+        font-size: 20px;
+        color: var(--primary-color);
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .document-info {
+        flex: 1;
+    }
+
+    .document-title {
+        font-weight: 500;
+        margin-bottom: 3px;
+    }
+
+    .document-meta {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+    </style>
+
+    <!-- 导航栏加载脚本 -->
+    <script>
+        // 加载导航栏
+        fetch('./includes/navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+                
+                // 设置当前页面的导航项为活动状态
+                const currentPage = window.location.pathname.split('/').pop();
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    const linkPage = link.getAttribute('href');
+                    if (currentPage === linkPage || 
+                        (currentPage === 'person_detail.html' && linkPage.includes('person'))) {
+                        link.classList.add('active');
+                    }
+                });
+            })
+            .catch(error => console.error('导航栏加载失败:', error));
+    </script>
+</body>
+</html> 

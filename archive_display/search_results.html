@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>检索结果 - 会议纪要档案管理系统</title>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    <!-- 引入Ant Design样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css">
+    <!-- 引入图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 引入自定义样式表 -->
+    <style>
+        :root {
+            --primary-color: #1a4b91;
+            --secondary-color: #f5222d;
+            --text-color: #333333;
+            --text-secondary: #666666;
+            --border-color: #e8e8e8;
+            --bg-light: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .header {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .tag {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        .tag-red {
+            background-color: #fff1f0;
+            color: #f5222d;
+            border: 1px solid #ffa39e;
+        }
+
+        .tag-blue {
+            background-color: #e6f7ff;
+            color: #1890ff;
+            border: 1px solid #91d5ff;
+        }
+
+        .footer-section {
+            background-color: white;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 引入导航栏 -->
+    <div id="navbar-container"></div>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 搜索区域 -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="搜索会议档案关键词..." value="数字化转型">
+                <button class="search-btn"><i class="fas fa-search"></i> 搜索</button>
+            </div>
+            <div class="search-helper">
+                已为您找到 <span class="result-count">18</span> 条与"数字化转型"相关的会议纪要记录
+            </div>
+        </div>
+
+        <!-- 筛选器和结果区域布局 -->
+        <div class="results-layout">
+            <!-- 左侧筛选器 -->
+            <div class="filter-panel">
+                <div class="filter-section">
+                    <h3 class="filter-title">时间范围</h3>
+                    <div class="filter-content">
+                        <div class="date-range">
+                            <input type="date" class="date-input" value="2023-01-01">
+                            <span class="date-separator">至</span>
+                            <input type="date" class="date-input" value="2023-12-31">
+                        </div>
+                        <div class="date-quick-select">
+                            <button class="quick-date active">全部</button>
+                            <button class="quick-date">最近一月</button>
+                            <button class="quick-date">最近三月</button>
+                            <button class="quick-date">最近一年</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3 class="filter-title">部门筛选</h3>
+                    <div class="filter-content">
+                        <div class="checkbox-filter">
+                            <div class="filter-item">
+                                <input type="checkbox" id="dep1" checked>
+                                <label for="dep1">全部部门</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="dep2">
+                                <label for="dep2">技术研发部</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="dep3">
+                                <label for="dep3">产品规划部</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="dep4">
+                                <label for="dep4">市场营销部</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="dep5">
+                                <label for="dep5">战略规划部</label>
+                            </div>
+                        </div>
+                        <div class="filter-more">
+                            <a href="#" class="more-link-small">显示更多 <i class="fas fa-angle-down"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <h3 class="filter-title">知识类型</h3>
+                    <div class="filter-content">
+                        <div class="checkbox-filter">
+                            <div class="filter-item">
+                                <input type="checkbox" id="type1" checked>
+                                <label for="type1">全部类型</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="type2">
+                                <label for="type2">会议</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="type3">
+                                <label for="type3">议题</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="type4">
+                                <label for="type4">人物</label>
+                            </div>
+                            <div class="filter-item">
+                                <input type="checkbox" id="type5">
+                                <label for="type5">文档</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn reset-btn">重置筛选</button>
+                    <button class="filter-btn apply-btn">应用筛选</button>
+                </div>
+            </div>
+            
+            <!-- 右侧结果区域 -->
+            <div class="results-panel">
+                <!-- 结果排序和视图选项 -->
+                <div class="results-header">
+                    <div class="sort-options">
+                        <span class="sort-label">排序方式:</span>
+                        <a href="#" class="sort-option active">相关度 <i class="fas fa-arrow-down"></i></a>
+                        <a href="#" class="sort-option">会议时间</a>
+                        <a href="#" class="sort-option">重要程度</a>
+                    </div>
+                    <div class="view-options">
+                        <a href="#" class="view-option active"><i class="fas fa-list"></i></a>
+                        <a href="#" class="view-option"><i class="fas fa-th-large"></i></a>
+                        <a href="#" class="view-option"><i class="fas fa-calendar-alt"></i></a>
+                    </div>
+                </div>
+                
+                <!-- 结果列表 -->
+                <div class="results-list">
+                    <!-- 议题结果项 -->
+                    <div class="result-item">
+                        <div class="result-header">
+                            <div class="result-type">
+                                <span class="result-badge topic-badge">议题</span>
+                            </div>
+                            <div class="result-date">更新于: 2023-12-15</div>
+                        </div>
+                        <div class="result-title">
+                            <a href="topic_detail.html">全面数字化转型战略规划与实施路径</a>
+                            <span class="tag tag-red">重要</span>
+                        </div>
+                        <div class="result-summary">
+                            制定企业整体数字化转型路线图，包括技术架构升级、业务流程重组和数据治理体系建设。本议题通过对标行业最佳实践，结合公司实际情况，形成了分阶段、全方位的数字化转型战略...
+                            <span class="highlight-text">数字化转型</span>将分为三个阶段实施：基础设施升级、业务流程数字化和数据驱动创新...
+                        </div>
+                        <div class="result-meta">
+                            <span><i class="fas fa-file-alt"></i> 3次会议讨论</span>
+                            <span><i class="fas fa-building"></i> 战略规划部</span>
+                            <span><i class="fas fa-user-tie"></i> 张国强</span>
+                            <span><i class="fas fa-check-circle"></i> 已形成决议</span>
+                            <a href="topic_detail.html" class="view-detail">查看详情 <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- 会议结果项 -->
+                    <div class="result-item">
+                        <div class="result-header">
+                            <div class="result-type">
+                                <span class="result-badge meeting-badge">会议</span>
+                            </div>
+                            <div class="result-date">会议日期: 2023-11-28</div>
+                        </div>
+                        <div class="result-title">
+                            <a href="#">数字化转型战略季度评审会议</a>
+                        </div>
+                        <div class="result-summary">
+                            本次会议对<span class="highlight-text">数字化转型</span>战略第一阶段执行情况进行了全面评估，讨论了目前面临的技术挑战和资源配置问题。会议决定加速云基础设施建设，并重点推进数据中台建设进度...
+                        </div>
+                        <div class="result-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> 北京总部</span>
+                            <span><i class="fas fa-users"></i> 15人参会</span>
+                            <span><i class="fas fa-tasks"></i> 3个议题</span>
+                            <span><i class="fas fa-clipboard-check"></i> 4项决议</span>
+                            <a href="#" class="view-detail">查看详情 <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- 执行任务结果项 -->
+                    <div class="result-item">
+                        <div class="result-header">
+                            <div class="result-type">
+                                <span class="result-badge task-badge">执行任务</span>
+                            </div>
+                            <div class="result-date">截止日期: 2024-03-15</div>
+                        </div>
+                        <div class="result-title">
+                            <a href="#">基础架构云化改造项目</a>
+                            <span class="tag tag-blue">执行中</span>
+                        </div>
+                        <div class="result-summary">
+                            作为<span class="highlight-text">数字化转型</span>战略的核心项目之一，本任务旨在将企业核心IT基础设施迁移至云平台，建立弹性可扩展的技术架构。目前已完成30%，主要挑战在于遗留系统的兼容性问题...
+                        </div>
+                        <div class="result-meta">
+                            <span><i class="fas fa-calendar-day"></i> 开始: 2023-10-01</span>
+                            <span><i class="fas fa-user-tie"></i> 负责人: 李明</span>
+                            <span><i class="fas fa-users"></i> 8人团队</span>
+                            <span><i class="fas fa-tasks"></i> 进度: 30%</span>
+                            <a href="#" class="view-detail">查看详情 <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- 决议结果项 -->
+                    <div class="result-item">
+                        <div class="result-header">
+                            <div class="result-type">
+                                <span class="result-badge resolution-badge">决议</span>
+                            </div>
+                            <div class="result-date">形成日期: 2023-09-12</div>
+                        </div>
+                        <div class="result-title">
+                            <a href="#">关于加速数字化转型的预算调整方案</a>
+                        </div>
+                        <div class="result-summary">
+                            为支持企业<span class="highlight-text">数字化转型</span>战略的实施，董事会批准追加2024年度数字化建设预算2000万元，重点用于数据中台建设、核心系统改造和人才引进。该预算将从...
+                        </div>
+                        <div class="result-meta">
+                            <span><i class="fas fa-file-signature"></i> 决议编号: DEC-2023-42</span>
+                            <span><i class="fas fa-users"></i> 7人批准</span>
+                            <span><i class="fas fa-user-tie"></i> 张国强签发</span>
+                            <a href="#" class="view-detail">查看详情 <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    
+                    <!-- 文档结果项 -->
+                    <div class="result-item">
+                        <div class="result-header">
+                            <div class="result-type">
+                                <span class="result-badge document-badge">文档</span>
+                            </div>
+                            <div class="result-date">更新日期: 2023-08-05</div>
+                        </div>
+                        <div class="result-title">
+                            <a href="#">《企业数字化转型白皮书(2023版)》</a>
+                        </div>
+                        <div class="result-summary">
+                            本白皮书详细阐述了公司<span class="highlight-text">数字化转型</span>的战略意义、总体框架和关键举措。包括行业数字化趋势分析、企业现状评估、转型目标与规划、技术路线选择、组织能力建设等内容...
+                        </div>
+                        <div class="result-meta">
+                            <span><i class="fas fa-file-pdf"></i> PDF文档</span>
+                            <span><i class="fas fa-pen-fancy"></i> 作者: 战略规划部</span>
+                            <span><i class="fas fa-eye"></i> 153次阅读</span>
+                            <a href="#" class="view-detail">查看文档 <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分页控件 -->
+                <div class="pagination-container">
+                    <button class="pagination-btn" disabled><i class="fas fa-angle-left"></i></button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <span class="pagination-ellipsis">...</span>
+                    <button class="pagination-btn">4</button>
+                    <button class="pagination-btn"><i class="fas fa-angle-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部区域 -->
+        <footer class="footer-section">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-landmark"></i>
+                    会议纪要档案管理系统
+                </div>
+                <div class="footer-links">
+                    <a href="#">关于系统</a>
+                    <a href="#">帮助中心</a>
+                    <a href="#">联系我们</a>
+                </div>
+                <div class="footer-copyright">
+                    © 2023 会议纪要档案管理系统 版权所有
+                </div>
+            </div>
+        </footer>
+    </main>
+
+<style>
+/* 检索结果页面专用样式 */
+.search-section {
+    background-color: var(--primary-color);
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+}
+
+.search-box {
+    flex: 1;
+    padding: 18px 25px;
+    border: none;
+    border-radius: 12px 0 0 12px;
+    font-size: 17px;
+    background-color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.search-box:focus {
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    outline: none;
+}
+
+.search-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0 12px 12px 0;
+    padding: 0 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid white;
+}
+
+.search-btn:hover {
+    background-color: #0e2c59;
+}
+
+.search-section .search-helper {
+    color: rgba(255, 255, 255, 0.9);
+    text-align: left;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.result-count {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* 结果页面布局 */
+.results-layout {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+/* 左侧筛选面板 */
+.filter-panel {
+    flex: 0 0 280px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    height: fit-content;
+}
+
+.filter-section {
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.filter-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.filter-content {
+    font-size: 14px;
+}
+
+/* 日期筛选器 */
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.date-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.date-separator {
+    color: var(--text-secondary);
+}
+
+.date-quick-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.quick-date {
+    padding: 5px 10px;
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quick-date.active, .quick-date:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 复选框筛选器 */
+.checkbox-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-more {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.more-link-small {
+    font-size: 12px;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.more-link-small:hover {
+    text-decoration: underline;
+}
+
+/* 筛选按钮 */
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.filter-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+    transition: all 0.3s;
+}
+
+.reset-btn {
+    background-color: var(--bg-light);
+    color: var(--text-color);
+}
+
+.reset-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.apply-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.apply-btn:hover {
+    background-color: #0e2c59;
+}
+
+/* 右侧结果面板 */
+.results-panel {
+    flex: 1;
+}
+
+/* 结果头部区域 */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.sort-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.sort-option {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.sort-option:hover, .sort-option.active {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.view-options {
+    display: flex;
+    gap: 10px;
+}
+
+.view-option {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-light);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+}
+
+.view-option:hover, .view-option.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* 结果列表 */
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.result-item {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+}
+
+.result-item:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.result-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 15px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.topic-badge {
+    background-color: var(--primary-color);
+}
+
+.meeting-badge {
+    background-color: #2f54eb;
+}
+
+.task-badge {
+    background-color: #52c41a;
+}
+
+.resolution-badge {
+    background-color: var(--secondary-color);
+}
+
+.document-badge {
+    background-color: #722ed1;
+}
+
+.result-date {
+    color: var(--text-secondary);
+}
+
+.result-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.result-title a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.result-title a:hover {
+    color: #0e2c59;
+}
+
+.result-summary {
+    font-size: 14px;
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.highlight-text {
+    background-color: rgba(255, 230, 0, 0.3);
+    padding: 0 3px;
+    font-weight: 600;
+}
+
+.result-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    align-items: center;
+}
+
+.view-detail {
+    margin-left: auto;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.view-detail:hover {
+    color: #0e2c59;
+}
+
+/* 分页控件 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 30px;
+}
+
+.pagination-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.pagination-btn:hover:not(:disabled), .pagination-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+    .results-layout {
+        flex-direction: column;
+    }
+    
+    .filter-panel {
+        flex: none;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sort-options {
+        gap: 10px;
+    }
+    
+    .sort-label {
+        display: none;
+    }
+    
+    .result-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .view-detail {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .results-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .view-options {
+        align-self: flex-end;
+    }
+}
+</style>
+
+<!-- 在页面底部添加导航栏加载脚本 -->
+<script>
+    // 加载导航栏
+    fetch('./includes/navbar.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbar-container').innerHTML = data;
+            
+            // 设置当前页面的导航项为活动状态
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                const linkPage = link.getAttribute('href');
+                if (currentPage === linkPage || 
+                    (currentPage === 'search_results.html' && linkPage === 'search_results.html')) {
+                    link.classList.add('active');
+                }
+            });
+        })
+        .catch(error => console.error('导航栏加载失败:', error));
+</script>
+
+</body>
+</html> 

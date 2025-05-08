@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会议纪要档案管理系统 - 组织架构</title>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    <!-- 引入Ant Design样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css">
+    <!-- 引入图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        /* 基础样式变量 */
+        :root {
+            --primary-color: #1a4b91;
+            --secondary-color: #f5222d;
+            --text-color: #333333;
+            --text-secondary: #666666;
+            --border-color: #e8e8e8;
+            --bg-light: #f5f5f5;
+            --success-color: #52c41a;
+            --warning-color: #faad14;
+            --error-color: #f5222d;
+        }
+
+        /* 基础重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+             /* 顶部导航栏样式 */
+      .header {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--header-height);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 主内容布局 */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* 面包屑导航 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb .separator {
+            margin: 0 8px;
+        }
+
+        /* 组织架构布局 */
+        .org-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .org-tree-container {
+            flex: 2;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .org-tree-container:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .org-info-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 380px;
+        }
+
+        /* 卡片样式 */
+        .org-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .org-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .org-card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .org-card-content {
+            padding: 20px;
+        }
+
+        /* 部门列表样式 */
+        .dept-list {
+            list-style: none;
+        }
+
+        .dept-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+
+        .dept-item:hover {
+            background-color: rgba(26, 75, 145, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .dept-item:last-child {
+            border-bottom: none;
+        }
+
+        .dept-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 3px 8px rgba(26, 75, 145, 0.2);
+        }
+
+        .dept-info {
+            flex: 1;
+        }
+
+        .dept-name {
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .dept-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .dept-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .dept-stat-item {
+            padding: 3px 8px;
+            background-color: rgba(26, 75, 145, 0.1);
+            border-radius: 4px;
+            color: var(--primary-color);
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .dept-stat-item:hover {
+            background-color: rgba(26, 75, 145, 0.2);
+        }
+
+        /* 会议列表样式 */
+        .meeting-list {
+            list-style: none;
+        }
+
+        .meeting-item {
+            padding: 15px 0;
+            border-bottom: 1px dashed var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .meeting-item:hover {
+            background-color: rgba(26, 75, 145, 0.02);
+            padding-left: 10px;
+        }
+
+        .meeting-item:last-child {
+            border-bottom: none;
+        }
+
+        .meeting-title {
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .meeting-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 职责列表样式 */
+        .responsibility-list {
+            list-style: none;
+            counter-reset: item;
+        }
+
+        .responsibility-item {
+            position: relative;
+            padding: 12px 0 12px 30px;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .responsibility-item:hover {
+            background-color: rgba(26, 75, 145, 0.02);
+            padding-left: 35px;
+        }
+
+        .responsibility-item:last-child {
+            border-bottom: none;
+        }
+
+        .responsibility-item:before {
+            counter-increment: item;
+            content: counter(item) ".";
+            position: absolute;
+            left: 0;
+            top: 12px;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 15px;
+        }
+
+        /* 图表容器 */
+        .tree-chart {
+            height: 600px;
+            width: 100%;
+        }
+
+        /* 底部区域 */
+        .footer-section {
+            background-color: white;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+            .org-container {
+                flex-direction: column;
+            }
+            
+            .org-info-container {
+                min-width: unset;
+            }
+            
+            .tree-chart {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tree-chart {
+                height: 400px;
+            }
+            
+            .dept-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .meeting-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dept-stats {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div id="navbar-container"></div>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="archive_display.html"><i class="fas fa-home"></i> 首页</a>
+            <span class="separator">/</span>
+            <span>组织架构</span>
+        </div>
+
+        <div class="org-container">
+            <div class="org-tree-container">
+                <div class="org-card-header">
+                    <span>公司组织架构图</span>
+                    <div>
+                        <i class="fas fa-expand-arrows-alt" style="cursor: pointer; margin-right: 10px;" title="全屏查看"></i>
+                        <i class="fas fa-download" style="cursor: pointer;" title="导出图片"></i>
+                    </div>
+                </div>
+                <div class="org-card-content">
+                    <div id="org-tree" class="tree-chart"></div>
+                </div>
+            </div>
+            
+            <div class="org-info-container">
+                <div class="org-info-card">
+                    <div class="org-card-header">
+                        <span>部门列表</span>
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div class="org-card-content">
+                        <ul class="dept-list">
+                            <li class="dept-item" style="background-color: rgba(18, 57, 111, 0.05);">
+                                <div class="dept-icon">技</div>
+                                <div class="dept-info">
+                                    <div class="dept-name">技术中心</div>
+                                    <div class="dept-meta">
+                                        <span><i class="fas fa-user"></i> 主管: 李明</span>
+                                        <span><i class="fas fa-users"></i> 45人</span>
+                                    </div>
+                                    <div class="dept-stats">
+                                        <span class="dept-stat-item"><i class="fas fa-file-alt"></i> 12会议</span>
+                                        <span class="dept-stat-item"><i class="fas fa-tasks"></i> 8议题</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dept-item">
+                                <div class="dept-icon">产</div>
+                                <div class="dept-info">
+                                    <div class="dept-name">产品中心</div>
+                                    <div class="dept-meta">
+                                        <span><i class="fas fa-user"></i> 主管: 王洪</span>
+                                        <span><i class="fas fa-users"></i> 32人</span>
+                                    </div>
+                                    <div class="dept-stats">
+                                        <span class="dept-stat-item"><i class="fas fa-file-alt"></i> 9会议</span>
+                                        <span class="dept-stat-item"><i class="fas fa-tasks"></i> 7议题</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dept-item">
+                                <div class="dept-icon">市</div>
+                                <div class="dept-info">
+                                    <div class="dept-name">市场中心</div>
+                                    <div class="dept-meta">
+                                        <span><i class="fas fa-user"></i> 主管: 赵明</span>
+                                        <span><i class="fas fa-users"></i> 28人</span>
+                                    </div>
+                                    <div class="dept-stats">
+                                        <span class="dept-stat-item"><i class="fas fa-file-alt"></i> 7会议</span>
+                                        <span class="dept-stat-item"><i class="fas fa-tasks"></i> 5议题</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dept-item">
+                                <div class="dept-icon">财</div>
+                                <div class="dept-info">
+                                    <div class="dept-name">财务部</div>
+                                    <div class="dept-meta">
+                                        <span><i class="fas fa-user"></i> 主管: 钱总</span>
+                                        <span><i class="fas fa-users"></i> 15人</span>
+                                    </div>
+                                    <div class="dept-stats">
+                                        <span class="dept-stat-item"><i class="fas fa-file-alt"></i> 5会议</span>
+                                        <span class="dept-stat-item"><i class="fas fa-tasks"></i> 3议题</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dept-item">
+                                <div class="dept-icon">人</div>
+                                <div class="dept-info">
+                                    <div class="dept-name">人力资源部</div>
+                                    <div class="dept-meta">
+                                        <span><i class="fas fa-user"></i> 主管: 周经理</span>
+                                        <span><i class="fas fa-users"></i> 12人</span>
+                                    </div>
+                                    <div class="dept-stats">
+                                        <span class="dept-stat-item"><i class="fas fa-file-alt"></i> 6会议</span>
+                                        <span class="dept-stat-item"><i class="fas fa-tasks"></i> 4议题</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="org-info-card">
+                    <div class="org-card-header">
+                        <span>最近相关会议</span>
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="org-card-content">
+                        <ul class="meeting-list">
+                            <li class="meeting-item">
+                                <div class="meeting-title">技术中心季度工作会议</div>
+                                <div class="meeting-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> 2023-10-15</span>
+                                    <span><i class="fas fa-user"></i> 主持: 李明</span>
+                                </div>
+                            </li>
+                            <li class="meeting-item">
+                                <div class="meeting-title">产品中心需求评审会</div>
+                                <div class="meeting-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> 2023-10-12</span>
+                                    <span><i class="fas fa-user"></i> 主持: 王洪</span>
+                                </div>
+                            </li>
+                            <li class="meeting-item">
+                                <div class="meeting-title">部门协作流程优化讨论会</div>
+                                <div class="meeting-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> 2023-10-08</span>
+                                    <span><i class="fas fa-user"></i> 主持: 张国强</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="org-info-card">
+                    <div class="org-card-header">
+                        <span>技术中心部门职责</span>
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="org-card-content">
+                        <ul class="responsibility-list">
+                            <li class="responsibility-item">负责公司技术战略规划与实施</li>
+                            <li class="responsibility-item">负责产品技术方案设计与开发</li>
+                            <li class="responsibility-item">负责技术架构优化与系统升级</li>
+                            <li class="responsibility-item">负责技术团队建设与管理</li>
+                            <li class="responsibility-item">负责技术创新与研发</li>
+                            <li class="responsibility-item">负责系统运维与技术支持</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部区域 -->
+    <footer class="footer-section">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-landmark"></i>
+                会议纪要档案管理系统
+            </div>
+            <div class="footer-links">
+                <a href="#">关于系统</a>
+                <a href="#">帮助中心</a>
+                <a href="#">联系我们</a>
+            </div>
+            <div class="footer-copyright">
+                © 2023 会议纪要档案管理系统 版权所有
+            </div>
+        </div>
+    </footer>
+
+    <!-- 导航栏加载脚本 -->
+    <script>
+        // 加载导航栏
+        fetch('./includes/navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+                
+                // 设置当前页面的导航项为活动状态
+                const currentPage = window.location.pathname.split('/').pop();
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    const linkPage = link.getAttribute('href');
+                    if (currentPage === linkPage || 
+                        (currentPage === 'organization_structure.html' && linkPage.includes('organization'))) {
+                        link.classList.add('active');
+                    }
+                });
+            })
+            .catch(error => console.error('导航栏加载失败:', error));
+
+        // 初始化组织架构树状图
+        var orgTreeChart = echarts.init(document.getElementById('org-tree'));
+        
+        // 组织架构树数据
+        var orgTreeOption = {
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove'
+            },
+            series: [{
+                type: 'tree',
+                data: [{
+                    name: '公司总部',
+                    symbol: 'roundRect',
+                    symbolSize: [120, 30],
+                    itemStyle: {
+                        color: '#12396f'
+                    },
+                    label: {
+                        color: '#fff',
+                        fontSize: 14
+                    },
+                    children: [
+                        {
+                            name: '董事长办公室',
+                            symbol: 'roundRect',
+                            symbolSize: [120, 30],
+                            itemStyle: {
+                                color: '#2c5985'
+                            },
+                            label: {
+                                color: '#fff',
+                                fontSize: 12
+                            }
+                        },
+                        {
+                            name: '技术中心',
+                            symbol: 'roundRect',
+                            symbolSize: [100, 30],
+                            itemStyle: {
+                                color: '#2c5985'
+                            },
+                            label: {
+                                color: '#fff'
+                            },
+                            children: [
+                                {
+                                    name: '研发部',
+                                    symbol: 'roundRect',
+                                    symbolSize: [80, 25],
+                                    itemStyle: {
+                                        color: '#3e77b0'
+                                    },
+                                    label: {
+                                        color: '#fff'
+                                    },
+                                    children: [
+                                        {
+                                            name: '前端组',
+                                            symbol: 'roundRect',
+                                            symbolSize: [70, 20],
+                                            itemStyle: {
+                                                color: '#5a92c9'
+                                            }
+                                        },
+                                        {
+                                            name: '后端组',
+                                            symbol: 'roundRect',
+                                            symbolSize: [70, 20],
+                                            itemStyle: {
+                                                color: '#5a92c9'
+                                            }
+                                        },
+                                        {
+                                            name: '移动端组',
+                                            symbol: 'roundRect',
+                                            symbolSize: [70, 20],
+                                            itemStyle: {
+                                                color: '#5a92c9'
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    name: '测试部',
+                                    symbol: 'roundRect',
+                                    symbolSize: [80, 25],
+                                    itemStyle: {
+                                        color: '#3e77b0'
+                                    },
+                                    label: {
+                                        color: '#fff'
+                                    }
+                                },
+                                {
+                                    name: '运维部',
+                                    symbol: 'roundRect',
+                                    symbolSize: [80, 25],
+                                    itemStyle: {
+                                        color: '#3e77b0'
+                                    },
+                                    label: {
+                                        color: '#fff'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            name: '产品中心',
+                            symbol: 'roundRect',
+                            symbolSize: [100, 30],
+                            itemStyle: {
+                                color: '#2c5985'
+                            },
+                            label: {
+                                color: '#fff'
+                            },
+                            children: [
+                                {
+                                    name: '产品规划部',
+                                    symbol: 'roundRect',
+                                    symbolSize: [80, 25],
+                                    itemStyle: {
+                                        color: '#3e77b0'
+                                    },
+                                    label: {
+                                        color: '#fff'
+                                    }
+                                },
+                                {
+                                    name: '用户体验部',
+                                    symbol: 'roundRect',
+                                    symbolSize: [80, 25],
+                                    itemStyle: {
+                                        color: '#3e77b0'
+                                    },
+                                    label: {
+                                        color: '#fff'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            name: '市场中心',
+                            symbol: 'roundRect',
+                            symbolSize: [100, 30],
+                            itemStyle: {
+                                color: '#2c5985'
+                            },
+                            label: {
+                                color: '#fff'
+                            },
+                            children: [
+                                {
+                                    name: '市场策划部',
+                                    symbol: 'roundRect',
+                                    symbolSize: [80, 25],
+                                    itemStyle: {
+                                        color: '#3e77b0'
+                                    },
+                                    label: {
+                                        color: '#fff'
+                                    }
+                                },
+                                {
+                                    name: '销售部',
+                                    symbol: 'roundRect',
+                                    symbolSize: [80, 25],
+                                    itemStyle: {
+                                        color: '#3e77b0'
+                                    },
+                                    label: {
+                                        color: '#fff'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            name: '财务部',
+                            symbol: 'roundRect',
+                            symbolSize: [100, 30],
+                            itemStyle: {
+                                color: '#2c5985'
+                            },
+                            label: {
+                                color: '#fff'
+                            }
+                        },
+                        {
+                            name: '人力资源部',
+                            symbol: 'roundRect',
+                            symbolSize: [100, 30],
+                            itemStyle: {
+                                color: '#2c5985'
+                            },
+                            label: {
+                                color: '#fff'
+                            }
+                        }
+                    ]
+                }],
+                top: '5%',
+                left: '10%',
+                bottom: '5%',
+                right: '10%',
+                symbolSize: 7,
+                orient: 'vertical',
+                expandAndCollapse: true,
+                initialTreeDepth: 3,
+                label: {
+                    position: 'inside',
+                    rotate: 0,
+                    verticalAlign: 'middle',
+                    align: 'center',
+                    fontSize: 12
+                },
+                leaves: {
+                    label: {
+                        position: 'inside',
+                        rotate: 0,
+                        verticalAlign: 'middle',
+                        align: 'center'
+                    }
+                },
+                animationDuration: 550,
+                animationDurationUpdate: 750
+            }]
+        };
+        
+        // 设置图表选项
+        orgTreeChart.setOption(orgTreeOption);
+        
+        // 窗口大小变化时重新调整图表大小
+        window.addEventListener('resize', function() {
+            orgTreeChart.resize();
+        });
+    </script>
+</body>
+</html> 

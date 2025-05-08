@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会议纪要档案管理系统 - 人员名录</title>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    <!-- 引入Ant Design样式 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css">
+    <!-- 引入图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        /* 基础样式变量 */
+        :root {
+            --primary-color: #1a4b91;
+            --secondary-color: #f5222d;
+            --text-color: #333333;
+            --text-secondary: #666666;
+            --border-color: #e8e8e8;
+            --bg-light: #f5f5f5;
+            --success-color: #52c41a;
+            --warning-color: #faad14;
+            --error-color: #f5222d;
+            --header-height: 60px;
+        }
+
+        /* 导航栏样式 */
+        .header {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--header-height);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 基础重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 主内容布局 */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* 面包屑导航 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb .separator {
+            margin: 0 8px;
+        }
+
+        /* 人员名录布局 */
+        .personnel-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .personnel-list-container {
+            flex: 2;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .personnel-list-container:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .personnel-detail-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 380px;
+        }
+
+        /* 搜索和过滤区域 */
+        .filter-container {
+            padding: 20px;
+            background: rgba(26, 75, 145, 0.03);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 75, 145, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 75, 145, 0.1);
+        }
+
+        /* 人员列表样式 */
+        .person-list-header {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 150px 120px;
+            padding: 15px 20px;
+            background: rgba(26, 75, 145, 0.05);
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .person-item {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 150px 120px;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            align-items: center;
+        }
+
+        .person-item:hover {
+            background: rgba(26, 75, 145, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .person-item.active {
+            background: rgba(26, 75, 145, 0.08);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .person-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 3px 8px rgba(26, 75, 145, 0.2);
+        }
+
+        .person-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .person-name {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 15px;
+        }
+
+        .person-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .person-department {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: normal;
+            margin-right: 5px;
+        }
+
+        .tag-blue {
+            background-color: #e6f7ff;
+            color: #1890ff;
+            border: 1px solid #91d5ff;
+        }
+
+        .tag-green {
+            background-color: #f6ffed;
+            color: #52c41a;
+            border: 1px solid #b7eb8f;
+        }
+
+        .tag-orange {
+            background-color: #fff7e6;
+            color: #fa8c16;
+            border: 1px solid #ffd591;
+        }
+
+        /* 详情卡片样式 */
+        .personnel-detail-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .personnel-detail-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        /* 个人详情样式 */
+        .detail-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            box-shadow: 0 3px 8px rgba(26, 75, 145, 0.2);
+        }
+
+        .detail-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .detail-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .detail-title {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .detail-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .detail-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .detail-stat-item {
+            background: rgba(26, 75, 145, 0.03);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .detail-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .detail-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 会议列表样式 */
+        .meeting-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .meeting-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .meeting-item:last-child {
+            border-bottom: none;
+        }
+
+        .meeting-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .meeting-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 发言统计图表 */
+        .speech-chart {
+            height: 250px;
+            width: 100%;
+        }
+
+        /* 统计网格样式 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: rgba(26, 75, 145, 0.03);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            background: rgba(26, 75, 145, 0.06);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 活动列表样式 */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 15px;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .activity-item:hover {
+            background: rgba(26, 75, 145, 0.05);
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 图表容器样式 */
+        .chart-container {
+            height: 300px;
+            width: 100%;
+        }
+
+        /* 相关人员列表样式 */
+        .related-personnel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .related-person-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .related-person-item:hover {
+            background: rgba(26, 75, 145, 0.05);
+        }
+
+        .related-person-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .related-person-info {
+            flex: 1;
+        }
+
+        .related-person-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .related-person-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .related-person-meta {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 标签云样式 */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+        }
+
+        .tag-cloud-item {
+            padding: 4px 12px;
+            background: rgba(26, 75, 145, 0.05);
+            border-radius: 16px;
+            font-size: 13px;
+            color: var(--primary-color);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .tag-cloud-item:hover {
+            background: rgba(26, 75, 145, 0.1);
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+            padding: 20px 0;
+        }
+
+        .page-item {
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .page-item:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .page-item.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 底部区域 */
+        .footer-section {
+            background-color: white;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+            .personnel-container {
+                flex-direction: column;
+            }
+            
+            .personnel-detail-container {
+                min-width: unset;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .person-list-header, .person-item {
+                grid-template-columns: 60px 1fr 120px;
+            }
+            
+            .person-list-header > div:nth-child(n+4),
+            .person-item > div:nth-child(n+4) {
+                display: none;
+            }
+            
+            .personnel-detail-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-item {
+                width: 100%;
+            }
+            
+            .filter-select {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 补充和修复关键样式 */
+
+        /* 列表项补充样式 */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .list-item:hover {
+            background: rgba(26, 75, 145, 0.03);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 3px;
+        }
+
+        .list-item-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 按钮样式补充 */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background: #15407d;
+            color: white;
+        }
+
+        /* 工具栏样式 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toolbar-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 空状态样式 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* 加载状态样式 */
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            margin-right: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div id="navbar-container"></div>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="archive_display.html"><i class="fas fa-home"></i> 首页</a>
+            <span class="separator">/</span>
+            <span>人员名录</span>
+        </div>
+
+        <div class="personnel-container">
+            <div class="personnel-list-container">
+                <div class="filter-container">
+                    <div class="filter-item">
+                        <span class="filter-label">部门:</span>
+                        <select class="filter-select">
+                            <option value="">全部</option>
+                            <option value="1">技术中心</option>
+                            <option value="2">产品中心</option>
+                            <option value="3">市场中心</option>
+                            <option value="4">财务部</option>
+                            <option value="5">人力资源部</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-label">职级:</span>
+                        <select class="filter-select">
+                            <option value="">全部</option>
+                            <option value="1">高层管理</option>
+                            <option value="2">中层管理</option>
+                            <option value="3">基层员工</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="搜索姓名、职位...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="person-list-header">
+                    <div>头像</div>
+                    <div>姓名</div>
+                    <div>工号</div>
+                    <div>部门</div>
+                    <div>会议次数</div>
+                    <div>相关议题</div>
+                </div>
+                
+                <div class="person-list">
+                    <div class="person-item active" onclick="selectPerson(this)">
+                        <div>
+                            <div class="person-avatar">张</div>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">张国强 <span class="badge badge-primary">董事长</span></div>
+                            <div>zhangguoqiang@example.com</div>
+                        </div>
+                        <div>GQ001</div>
+                        <div>董事长办公室</div>
+                        <div>15</div>
+                        <div>8</div>
+                    </div>
+                    
+                    <div class="person-item" onclick="selectPerson(this)">
+                        <div>
+                            <div class="person-avatar">李</div>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">李明 <span class="badge badge-primary">技术总监</span></div>
+                            <div>liming@example.com</div>
+                        </div>
+                        <div>LM002</div>
+                        <div>技术中心</div>
+                        <div>12</div>
+                        <div>7</div>
+                    </div>
+                    
+                    <div class="person-item" onclick="selectPerson(this)">
+                        <div>
+                            <div class="person-avatar">王</div>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">王洪 <span class="badge badge-primary">产品总监</span></div>
+                            <div>wanghong@example.com</div>
+                        </div>
+                        <div>WH003</div>
+                        <div>产品中心</div>
+                        <div>10</div>
+                        <div>6</div>
+                    </div>
+                    
+                    <div class="person-item" onclick="selectPerson(this)">
+                        <div>
+                            <div class="person-avatar">刘</div>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">刘晓 <span class="badge badge-primary">设计经理</span></div>
+                            <div>liuxiao@example.com</div>
+                        </div>
+                        <div>LX004</div>
+                        <div>产品中心</div>
+                        <div>8</div>
+                        <div>4</div>
+                    </div>
+                    
+                    <div class="person-item" onclick="selectPerson(this)">
+                        <div>
+                            <div class="person-avatar">赵</div>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">赵明 <span class="badge badge-primary">市场总监</span></div>
+                            <div>zhaoming@example.com</div>
+                        </div>
+                        <div>ZM005</div>
+                        <div>市场中心</div>
+                        <div>7</div>
+                        <div>3</div>
+                    </div>
+                    
+                    <div class="person-item" onclick="selectPerson(this)">
+                        <div>
+                            <div class="person-avatar">钱</div>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">钱财 <span class="badge badge-primary">财务总监</span></div>
+                            <div>qiancai@example.com</div>
+                        </div>
+                        <div>QC006</div>
+                        <div>财务部</div>
+                        <div>6</div>
+                        <div>2</div>
+                    </div>
+                    
+                    <div class="person-item" onclick="selectPerson(this)">
+                        <div>
+                            <div class="person-avatar">周</div>
+                        </div>
+                        <div class="person-info">
+                            <div class="person-name">周人力 <span class="badge badge-primary">人力资源经理</span></div>
+                            <div>zhourenli@example.com</div>
+                        </div>
+                        <div>ZRL007</div>
+                        <div>人力资源部</div>
+                        <div>5</div>
+                        <div>2</div>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <div class="page-item"><i class="fas fa-angle-double-left"></i></div>
+                    <div class="page-item"><i class="fas fa-angle-left"></i></div>
+                    <div class="page-item active">1</div>
+                    <div class="page-item">2</div>
+                    <div class="page-item">3</div>
+                    <div class="page-item"><i class="fas fa-angle-right"></i></div>
+                    <div class="page-item"><i class="fas fa-angle-double-right"></i></div>
+                </div>
+            </div>
+            
+            <div class="personnel-detail-container">
+                <div class="personnel-detail-card">
+                    <div class="card-header">
+                        <span>个人详情</span>
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="detail-avatar">张</div>
+                        <div class="detail-info">
+                            <div class="detail-name">张国强</div>
+                            <div class="detail-title">董事长</div>
+                            <div class="detail-contact">
+                                <span><i class="fas fa-phone"></i> 13800138000</span>
+                                <span><i class="fas fa-envelope"></i> zhangguoqiang@example.com</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-stats">
+                            <div class="detail-stat-item">
+                                <div class="detail-stat-value">15</div>
+                                <div class="detail-stat-label">参与会议</div>
+                            </div>
+                            <div class="detail-stat-item">
+                                <div class="detail-stat-value">8</div>
+                                <div class="detail-stat-label">相关议题</div>
+                            </div>
+                            <div class="detail-stat-item">
+                                <div class="detail-stat-value">12</div>
+                                <div class="detail-stat-label">发言次数</div>
+                            </div>
+                            <div class="detail-stat-item">
+                                <div class="detail-stat-value">6</div>
+                                <div class="detail-stat-label">决策事项</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="personnel-detail-card">
+                    <div class="card-header">
+                        <span>最近参与会议</span>
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="card-content">
+                        <ul class="meeting-list">
+                            <li class="meeting-item">
+                                <div class="meeting-title">2023年度工作规划会议</div>
+                                <div class="meeting-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> 2023-01-15</span>
+                                    <span><i class="fas fa-comment"></i> 发言 5 次</span>
+                                </div>
+                            </li>
+                            <li class="meeting-item">
+                                <div class="meeting-title">技术架构升级方案评审会议</div>
+                                <div class="meeting-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> 2023-06-05</span>
+                                    <span><i class="fas fa-comment"></i> 发言 4 次</span>
+                                </div>
+                            </li>
+                            <li class="meeting-item">
+                                <div class="meeting-title">半年度经营情况分析会议</div>
+                                <div class="meeting-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> 2023-07-10</span>
+                                    <span><i class="fas fa-comment"></i> 发言 3 次</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="personnel-detail-card">
+                    <div class="card-header">
+                        <span>会议发言统计</span>
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="card-content">
+                        <div id="speech-chart" class="speech-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部区域 -->
+    <footer class="footer-section">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-landmark"></i>
+                会议纪要档案管理系统
+            </div>
+            <div class="footer-links">
+                <a href="#">关于系统</a>
+                <a href="#">帮助中心</a>
+                <a href="#">联系我们</a>
+            </div>
+            <div class="footer-copyright">
+                © 2023 会议纪要档案管理系统 版权所有
+            </div>
+        </div>
+    </footer>
+
+    <!-- 导航栏加载脚本 -->
+    <script>
+        // 加载导航栏
+        fetch('./includes/navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+                
+                // 设置当前页面的导航项为活动状态
+                const currentPage = window.location.pathname.split('/').pop();
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    const linkPage = link.getAttribute('href');
+                    if (currentPage === linkPage || 
+                        (currentPage === 'personnel_directory.html' && linkPage.includes('personnel'))) {
+                        link.classList.add('active');
+                    }
+                });
+            })
+            .catch(error => console.error('导航栏加载失败:', error));
+
+        // 初始化发言统计图表
+        var speechChart = echarts.init(document.getElementById('speech-chart'));
+        
+        // 发言统计数据
+        var speechOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ['规划会议', '架构评审', '半年度分析', '预算会议', '战略研讨'],
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLabel: {
+                        rotate: 30,
+                        fontSize: 10
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '发言次数',
+                    nameTextStyle: {
+                        fontSize: 10
+                    },
+                    axisLabel: {
+                        fontSize: 10
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '发言次数',
+                    type: 'bar',
+                    barWidth: '60%',
+                    data: [5, 4, 3, 2, 3],
+                    itemStyle: {
+                        color: '#12396f'
+                    }
+                }
+            ]
+        };
+        
+        speechChart.setOption(speechOption);
+        
+        // 窗口大小变化时，重新调整图表大小
+        window.addEventListener('resize', function() {
+            speechChart.resize();
+        });
+        
+        // 选择人员
+        function selectPerson(element) {
+            // 移除所有选中状态
+            document.querySelectorAll('.person-item').forEach(function(item) {
+                item.classList.remove('active');
+            });
+            
+            // 添加选中状态
+            element.classList.add('active');
+            
+            // 模拟更新个人详情
+            // 在实际项目中，这里可能需要通过AJAX或其他方式获取数据
+            const name = element.querySelector('.person-name').textContent.split(' ')[0];
+            const title = element.querySelector('.badge').textContent;
+            const email = element.querySelector('.person-info div:last-child').textContent;
+            const dept = element.children[3].textContent;
+            const meetings = element.children[4].textContent;
+            const topics = element.children[5].textContent;
+            
+            document.querySelector('.detail-avatar').textContent = name.substring(0, 1);
+            document.querySelector('.detail-name').textContent = name;
+            document.querySelector('.detail-title').textContent = title;
+            document.querySelector('.detail-contact span:last-child').innerHTML = `<i class="fas fa-envelope"></i> ${email}`;
+            
+            document.querySelector('.detail-stats .detail-stat-item:first-child .detail-stat-value').textContent = meetings;
+            document.querySelector('.detail-stats .detail-stat-item:nth-child(2) .detail-stat-value').textContent = topics;
+            
+            // 更新图表数据（简易模拟）
+            const newData = Array.from({length: 5}, () => Math.floor(Math.random() * 7) + 1);
+            speechOption.series[0].data = newData;
+            speechChart.setOption(speechOption);
+        }
+    </script>
+</body>
+</html> 
