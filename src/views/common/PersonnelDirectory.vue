@@ -107,7 +107,7 @@
             <div class="card-content">
               <div class="detail-avatar">张</div>
               <div class="detail-info">
-                <div class="detail-name">张国强</div>
+                <div class="detail-name" @click="goToPersonDetail">张国强</div>
                 <div class="detail-title">董事长</div>
                 <div class="detail-contact">
                   <span><phone-outlined /> 13800138000</span>
@@ -211,6 +211,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import PersonHeader from '@/components/common/PersonHeader.vue'
 import * as echarts from 'echarts'
 import {
@@ -229,6 +230,8 @@ import {
   RightCircleOutlined,
   RightOutlined
 } from '@ant-design/icons-vue'
+
+const router = useRouter()
 
 // 表格数据
 const personnelData = ref([
@@ -361,14 +364,12 @@ const columns = [
     dataIndex: 'avatar',
     key: 'avatar',
     width: 80,
-    fixed: 'left',
   },
   {
     title: '姓名',
     dataIndex: 'name',
     key: 'name',
     width: 180,
-    fixed: 'left',
   },
   {
     title: '工号',
@@ -535,6 +536,11 @@ onMounted(() => {
     speechChart.resize()
   })
 })
+
+// 跳转到人物详情页
+const goToPersonDetail = () => {
+  router.push('/person/detail')
+}
 </script>
 
 <style lang="less" scoped>
@@ -1049,13 +1055,7 @@ onMounted(() => {
 }
 
 :deep(.ant-table-row-selected::before) {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: #1a4b91;
+  display: none;
 }
 
 :deep(.ant-pagination) {

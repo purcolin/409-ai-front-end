@@ -53,28 +53,28 @@
       <section class="category-section">
         <h2 class="section-title">档案分类导航</h2>
         <div class="category-grid">
-          <router-link to="#" class="category-card">
+          <router-link to="/archive" class="category-card">
             <div class="category-icon">
               <calendar-outlined />
             </div>
             <div class="category-name">按时间浏览</div>
             <div class="category-desc">按年度、季度、月份查看会议纪要档案</div>
           </router-link>
-          <router-link to="#" class="category-card">
+          <router-link to="/department" class="category-card">
             <div class="category-icon">
               <bank-outlined />
             </div>
             <div class="category-name">按部门浏览</div>
             <div class="category-desc">查看各部门相关的会议纪要档案</div>
           </router-link>
-          <router-link to="#" class="category-card">
+          <router-link to="/archive" class="category-card">
             <div class="category-icon">
               <project-outlined />
             </div>
             <div class="category-name">按项目浏览</div>
             <div class="category-desc">查看与特定项目相关的会议纪要</div>
           </router-link>
-          <router-link to="#" class="category-card">
+          <router-link to="/archive" class="category-card">
             <div class="category-icon">
               <tags-outlined />
             </div>
@@ -104,7 +104,7 @@
               </div>
             </div>
             <div class="topic-footer">
-              <router-link to="#" class="topic-link">查看详情</router-link>
+              <router-link to="/archive/topics/1" class="topic-link">查看详情</router-link>
             </div>
           </div>
           
@@ -124,7 +124,7 @@
               </div>
             </div>
             <div class="topic-footer">
-              <router-link to="#" class="topic-link">查看详情</router-link>
+              <router-link to="/archive/topics/2" class="topic-link">查看详情</router-link>
             </div>
           </div>
           
@@ -144,7 +144,7 @@
               </div>
             </div>
             <div class="topic-footer">
-              <router-link to="#" class="topic-link">查看详情</router-link>
+              <router-link to="/archive/topics/3" class="topic-link">查看详情</router-link>
             </div>
           </div>
         </div>
@@ -164,7 +164,7 @@
                 <span><user-outlined /> 张国强</span>
               </div>
             </div>
-            <router-link to="#" class="meeting-link">
+            <router-link to="/archive/meetings/1" class="meeting-link">
               <right-outlined />
             </router-link>
           </div>
@@ -179,7 +179,7 @@
                 <span><user-outlined /> 刘晓</span>
               </div>
             </div>
-            <router-link to="#" class="meeting-link">
+            <router-link to="/archive/meetings/2" class="meeting-link">
               <right-outlined />
             </router-link>
           </div>
@@ -194,13 +194,13 @@
                 <span><user-outlined /> 李明</span>
               </div>
             </div>
-            <router-link to="#" class="meeting-link">
+            <router-link to="/archive/meetings/3" class="meeting-link">
               <right-outlined />
             </router-link>
           </div>
         </div>
         <div class="more-link-container">
-          <router-link to="#" class="more-link">查看更多会议 <right-outlined /></router-link>
+          <router-link to="/archive" class="more-link">查看更多会议 <right-outlined /></router-link>
         </div>
       </section>
       
@@ -257,7 +257,7 @@
           </div>
         </div>
         <div class="more-link-container">
-          <router-link to="#" class="more-link">查看更多参会人员 <right-outlined /></router-link>
+          <router-link to="/personnel" class="more-link">查看更多参会人员 <right-outlined /></router-link>
         </div>
       </section>
     </div>

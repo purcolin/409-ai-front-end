@@ -200,7 +200,7 @@ const topics = ref([
       '决议事项追踪',
       '会议纪要归档'
     ],
-    link: '/archive/list'
+    link: '/archive'
   },
   {
     id: 2,
