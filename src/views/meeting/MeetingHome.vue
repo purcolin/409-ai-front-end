@@ -61,6 +61,7 @@
             <div class="category-desc">按年度、季度、月份查看会议纪要档案</div>
           </router-link>
           <router-link to="/department" class="category-card">
+          <router-link to="/department" class="category-card">
             <div class="category-icon">
               <bank-outlined />
             </div>
@@ -257,6 +258,7 @@
           </div>
         </div>
         <div class="more-link-container">
+          <router-link to="/personnel" class="more-link">查看更多参会人员 <right-outlined /></router-link>
           <router-link to="/personnel" class="more-link">查看更多参会人员 <right-outlined /></router-link>
         </div>
       </section>
