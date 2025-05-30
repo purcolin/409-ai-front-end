@@ -17,40 +17,10 @@
   </a-card>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 
-interface Education {
-  school: string
-  major: string
-  degree: string
-  startDate: string
-  endDate: string
-}
-
-interface Experience {
-  company: string
-  position: string
-  department: string
-  startDate: string
-  endDate: string
-}
-
-interface Person {
-  name: string
-  gender: string
-  birthDate: string
-  phone: string
-  email: string
-  department: string
-  education: Education[]
-  experience: Experience[]
-}
-
-const props = defineProps<{
-  person: Person
-  title?: string
-}>()
+const props = defineProps(['person', 'title'])
 
 const educationColumns = [
   {
@@ -71,7 +41,7 @@ const educationColumns = [
   {
     title: '时间',
     key: 'time',
-    customRender: ({ record }: { record: Education }) => {
+    customRender: ({ record }) => {
       return `${record.startDate} - ${record.endDate}`
     }
   }
@@ -96,9 +66,9 @@ const experienceColumns = [
   {
     title: '时间',
     key: 'time',
-    customRender: ({ record }: { record: Experience }) => {
+    customRender: ({ record }) => {
       return `${record.startDate} - ${record.endDate}`
     }
   }
 ]
-</script> 
+</script>

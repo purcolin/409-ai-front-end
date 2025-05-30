@@ -31,28 +31,6 @@
   </a-card>
 </template>
 
-<script setup lang="ts">
-interface Requirements {
-  education: string
-  major: string
-  experience: string
-  skills: string[]
-  others: string
-}
-
-interface Position {
-  name: string
-  code: string
-  department: string
-  level: string
-  quota: number
-  currentCount: number
-  responsibilities: string[]
-  requirements: Requirements
-}
-
-const props = defineProps<{
-  position: Position
-  title?: string
-}>()
-</script> 
+<script setup>
+const props = defineProps(['position', 'title'])
+</script>

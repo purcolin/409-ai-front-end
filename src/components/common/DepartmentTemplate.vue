@@ -21,29 +21,8 @@
   </a-card>
 </template>
 
-<script setup lang="ts">
-interface Staff {
-  name: string
-  position: string
-  entryDate: string
-  status: string
-}
-
-interface Department {
-  name: string
-  code: string
-  parentDepartment: string
-  manager: string
-  establishDate: string
-  phone: string
-  responsibilities: string[]
-  staff: Staff[]
-}
-
-const props = defineProps<{
-  department: Department
-  title?: string
-}>()
+<script setup>
+const props = defineProps(['department', 'title'])
 
 const staffColumns = [
   {
@@ -67,4 +46,4 @@ const staffColumns = [
     key: 'status'
   }
 ]
-</script> 
+</script>

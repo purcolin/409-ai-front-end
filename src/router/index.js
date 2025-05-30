@@ -3,44 +3,50 @@ import DepartmentDirectory from '@/views/common/DepartmentDirectory.vue'
 import DepartmentDetail from '@/views/common/DepartmentDetail.vue'
 import PositionDirectory from '@/views/common/PositionDirectory.vue'
 import PositionDetail from '@/views/common/PositionDetail.vue'
-import ArchiveList from '@/views/archive/ArchiveList.vue'
-import ArchiveDetail from '@/views/archive/ArchiveDetail.vue'
-import StatisticsView from '@/views/statistics/StatisticsView.vue'
+import StatisticsView from '@/views/meeting/statistics/StatisticsView.vue'
 
 const routes = [
   {
     path: '/',
-    redirect: '/archive'
+    redirect: '/hub'
   },
   {
-    path: '/archive',
-    name: 'ArchiveList',
-    component: ArchiveList
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/Login.vue'),
+    meta: {
+      showHeader: false
+    }
   },
   {
-    path: '/archive/:id',
-    name: 'ArchiveDetail',
-    component: ArchiveDetail
+    path: '/meeting',
+    name: 'MeetingHome',
+    component: () => import('@/views/meeting/MeetingHome.vue')
   },
   {
-    path: '/archive/meetings/:id',
-    name: 'MeetingDetail',
-    component: () => import('@/views/archive/MeetingDetail.vue')
+    path: '/meeting/detail/:id',
+    name: 'MeetingSubDetail',
+    component: () => import('@/views/meeting/MeetingDetail.vue')
   },
   {
-    path: '/archive/topics/:id',
+    path: '/meeting/topics/:id',
     name: 'TopicDetail',
-    component: () => import('@/views/archive/TopicDetail.vue')
+    component: () => import('@/views/meeting/MeetingTopicDetail.vue')
   },
   {
-    path: '/search',
-    name: 'SearchResults',
-    component: () => import('@/views/archive/SearchResults.vue')
+    path: '/meeting/search',
+    name: 'MeetingSearch',
+    component: () => import('@/views/meeting/MeetingSearch.vue')
+  },
+  {
+    path: '/meeting/statistics',
+    name: 'StatisticsView',
+    component: StatisticsView
   },
   {
     path: '/hub',
     name: 'KnowledgeHub',
-    component: () => import('@/views/knowledge/KnowledgeHub.vue')
+    component: () => import('@/views/hub/KnowledgeHub.vue')
   },
   {
     path: '/person/detail',
@@ -87,11 +93,6 @@ const routes = [
       title: '岗位详情',
       requiresAuth: true
     }
-  },
-  {
-    path: '/statistics',
-    name: 'StatisticsView',
-    component: StatisticsView
   }
 ]
 
@@ -100,4 +101,4 @@ const router = createRouter({
   routes
 })
 
-export default router 
+export default router

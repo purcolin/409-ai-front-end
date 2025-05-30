@@ -54,7 +54,7 @@
   </a-layout>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 import {
   MenuUnfoldOutlined,
@@ -90,4 +90,4 @@ const selectedKeys = ref(['archive'])
 .trigger:hover {
   color: #1890ff;
 }
-</style> 
+</style>
